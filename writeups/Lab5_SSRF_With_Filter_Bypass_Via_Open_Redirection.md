@@ -47,19 +47,19 @@ stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?usernam
 ## 📸 Proof of Concept (PoC)
 
 1. Examining the default stock check configuration parameters in Burp Repeater
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab5/APIRequest.png)
 
 2. Testing and confirming the open redirection issue on the next product path variable
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab5/openRedirectionVulnRequest.png)
 
 3. Intercepting the open redirection structure within the active proxy history logs
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab5/checkingOpenRedirection.png)
 
-4. Submitting the chained exploit payload inside Burp Repeater to achieve the bypass
-![Responses](../images/Lab1/solved.png)
+1. Submitting the chained exploit payload inside Burp Repeater to achieve the bypass
+![Responses](../images/Lab5/deleting.png)
 
-5. Lab solved successfully
-![Responses](../images/Lab1/solved.png)
+1. Lab solved successfully
+![Responses](../images/Lab5/solved.png)
 
 ---
 
