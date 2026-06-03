@@ -58,19 +58,17 @@ stockApi=http://127.1/%2561dmin/delete?username=carlos
 ## 📸 Proof of Concept (PoC)
 
 1. Reviewing the initial default stock API check parameter configuration
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab4/vulnRequest.png?v=1)
 
 2. Bypassing the local IP address restriction mechanism using short-hand notation `127.1`
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab4/bypassing1.png?v=1)
 
 3. Utilizing double URL encoding (`%2561dmin`) to fully evade the keyword detection engine
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab4/bypassing2.png?v=1)
 
 4. Forwarding the encoded payload string structure to target and delete the user Carlos
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab4/deleting.png?v=1)
 
-5. Lab solved successfully
-![Responses](../images/Lab1/solved.png)
 
 ---
 

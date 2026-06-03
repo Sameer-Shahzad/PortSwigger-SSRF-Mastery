@@ -17,29 +17,36 @@ Since we cannot see the backend server's direct response text, we rely on an Out
 ## 🔁 Steps to Reproduce
 
 1. Click on any product item on the shopping homepage and intercept the traffic using **Burp Suite**.
+
 2. Send the captured product view request (`GET /product?productId=X`) to **Burp Repeater**.
+
 3. Locate the `Referer` header field within the HTTP request payload layout.
+
 4. Open the **Burp Collaborator** client interface and generate a unique public interaction payload domain string.
+
 5. Replace the target domain address string within the `Referer` header using your newly generated Collaborator URL payload:
+
 ```text
 Referer: https://your-unique-id.oastify.com
-
 ```
 
-
 6. Click the **Send** button inside Burp Repeater to dispatch the modified request structure to the target server engine.
+
 7. Switch back over to your active **Collaborator** panel utility and select **"Poll now"** to pull down the asynchronous communication history log files.
+
 8. Observe the inbound tracking logs. You will see active **DNS query resolutions** followed quickly by formal **HTTP interactions** hitting your external listener client, confirming a successful backend blind SSRF compromise.
 
 ---
 
 ## 📸 Proof of Concept (PoC)
 
-1. Intercepting the product page request to locate the target analytical Referer parameter header
-![Responses](../images/Lab1/solved.png)
+### Observing DNS and HTTP Interactions in Burp Collaborator
 
-2. Lab solved successfully after verifying the external server interaction callback
-![Responses](../images/Lab1/solved.png)
+![Collaborator Interaction](../images/Lab3/collaboratorInReferrer.png)
+
+### Lab Solved Successfully
+
+![Lab Solved](../images/Lab3/solved.png)
 
 ---
 

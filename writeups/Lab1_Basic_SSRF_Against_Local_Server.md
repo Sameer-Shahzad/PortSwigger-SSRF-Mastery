@@ -1,86 +1,111 @@
 # Exploiting Basic Server-Side Request Forgery (SSRF)
 
-## 📌 Summary
+## Summary
 
-The application is vulnerable to **Server-Side Request Forgery (SSRF)** because its stock check feature trusts user-supplied URLs to fetch data from internal systems. By modifying this target URL, an attacker can force the server to make unauthorized HTTP requests to its own internal loops (`localhost`), gaining access to administrative functionalities that are otherwise restricted.
-
----
-
-## 🧾 Description
-
-Server-Side Request Forgery (SSRF) happens when a web server fetches external data based on a URL provided by the user without proper validation. In this application, the "Check stock" feature passes a URL via the `stockApi` parameter to retrieve warehouse data.
-
-Because the server blindly trusts this parameter, we can manipulate the request to point to the server's internal loopback address (`http://localhost/`). This bypasses standard front-end access controls, giving us access to the private `/admin` panel and allowing us to perform administrative actions like deleting user profiles.
+The application is vulnerable to Server-Side Request Forgery (SSRF) because its stock check feature trusts user-supplied URLs to fetch data from internal systems. By modifying this target URL, an attacker can force the server to make unauthorized HTTP requests to its own internal services running on localhost, gaining access to administrative functionality that should not be publicly accessible.
 
 ---
 
-## 🔁 Steps to Reproduce
+## Description
 
-1. Browse the website, open any product page, and locate the **"Check stock"** button.
-2. Intercept the request using **Burp Suite** when clicking the button, and send it to **Burp Repeater**. Notice the vulnerable `stockApi` parameter in the body data.
-```text
+Server-Side Request Forgery (SSRF) occurs when a web application fetches resources from a URL supplied by the user without proper validation. In this application, the "Check stock" functionality sends a URL through the `stockApi` parameter to retrieve inventory information.
 
-```
+Because the application does not validate the supplied URL, an attacker can replace the intended external endpoint with an internal address such as `http://localhost/`. The server then performs the request on behalf of the attacker, allowing access to internal resources including the administrative interface.
 
+---
 
+## Steps to Reproduce
 
+### 1. Open a Product Page
+
+Navigate to any product page and click the **Check stock** button.
+
+### 2. Intercept the Request
+
+Capture the request in Burp Suite and send it to Repeater.
+
+```http
 POST /product/stock HTTP/2
-...
+
 stockApi=http%3A%2F%2Fstock.weliketoshop.net%3A8080%2Fproduct%2Fstock%2Fcheck%3FproductId%3D1%26storeId%3D1
-
 ```
 
-3. Change the value of the `stockApi` parameter to target the internal admin panel directly:
-   ```text
-stockApi=http://localhost/admin
+### 3. Access the Internal Admin Panel
 
-```
+Replace the value of the `stockApi` parameter:
 
-4. Send the modified request in Repeater. Review the response (or use the Render tab) to view the restricted **Admin panel** and find the specific endpoint path used to delete users.
-5. Update the `stockApi` parameter once more with the deletion endpoint to target the user `carlos`:
 ```text
-
+stockApi=http://localhost/admin
 ```
 
+Send the request and review the response to identify administrative functionality and user management endpoints.
 
+### 4. Delete the Target User
 
+Update the parameter with the user deletion endpoint:
+
+```text
 stockApi=http://localhost/admin/delete?username=carlos
-
 ```
 
-6. Send the request. The server processes the internal URL locally, executes the command, and deletes the target user account successfully.
+Send the request.
+
+### 5. Verify the Result
+
+The server processes the internal request and deletes the user account successfully.
 
 ---
 
-## 📸 Proof of Concept (PoC)
+## Proof of Concept
 
-1. Intercepting the default stock check request via Burp Suite
-![Responses](../images/Lab1/vulnRequest.png)
+### Intercepting the Default Stock Check Request
 
-2. Modifying the parameter to access the hidden local admin interface
-![Responses](../images/Lab1/exploiting.png)
+![Intercepting Request](../images/Lab1/vulnRequest.png)
 
-3. Submitting the payload to delete the user Carlos
-![Responses](../images/Lab1/deleting.png)
+### Accessing the Internal Admin Interface
 
-4. Lab solved successfully
-![Responses](../images/Lab1/solved.png)
----
+![Accessing Admin Panel](../images/Lab1/exploiting.png)
 
-## 💥 Impact
+### Deleting the User Carlos
 
-* **Access to Restricted Interfaces** Attackers can access private internal portals, administration panels, and configuration dashboards meant only for local server environments.
-* **Internal Network Scanning** The vulnerable server can be used as a proxy to scan the internal network architecture, mapping open ports and identifying other vulnerable machines behind the firewall.
-* **Unauthorized Data Manipulation** Privileged endpoints can be triggered to modify infrastructure, change application state, or delete critical user data (as demonstrated by deleting the user account).
+![Deleting User](../images/Lab1/deleting.png)
+
+### Lab Solved Successfully
+
+![Lab Solved](../images/Lab1/solved.png)
 
 ---
 
-## 🛠️ Remediation
+## Impact
 
-To secure the application against SSRF vulnerabilities:
+### Access to Restricted Interfaces
 
-* **Implement Strict Allow-lists** Restrict the domain inputs accepted by the server to a pre-defined, trusted list of warehouse endpoints. Reject any inputs containing `localhost`, `127.0.0.1`, or unexpected internal host schemes.
-* **Disable URL Parsing Input** Where possible, avoid taking complete raw URLs from user input. Use an internal identifier or index keys mapping safely to backend destination configurations on the server side instead.
-* **Network-Level Segregation** Enforce firewall policies or network access control lists (ACLs) to ensure that public-facing web servers cannot communicate back with internal management endpoints or administrative protocols.
+Attackers can access internal administration panels, dashboards, and services that are intended to be reachable only from the local server.
 
-```
+### Internal Network Reconnaissance
+
+The vulnerable server can be used to interact with internal hosts and services, potentially revealing network architecture and exposed systems.
+
+### Unauthorized Actions
+
+Administrative functionality can be abused to modify application state, manipulate data, or perform destructive actions such as deleting user accounts.
+
+---
+
+## Remediation
+
+### Implement URL Allow-Listing
+
+Only allow requests to approved and trusted backend services. Reject requests targeting localhost, loopback addresses, and internal IP ranges.
+
+### Avoid User-Controlled URLs
+
+Use server-side identifiers instead of accepting complete URLs from users. Map identifiers to trusted backend endpoints internally.
+
+### Restrict Network Access
+
+Apply network segmentation and firewall rules to prevent public-facing systems from accessing sensitive internal administrative services.
+
+### Validate and Sanitize Input
+
+Perform strict validation on all user-supplied URLs and block requests to internal resources or unexpected protocols.
