@@ -60,13 +60,13 @@ stockApi=http://localhost:80%2523@stock.weliketoshop.net/admin/delete?username=c
 ## 📸 Proof of Concept (PoC)
 
 1. Reviewing the initial request parameter payload format to evaluate the target filter behaviors
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab7/checkingVulnRequest.png)
 
 2. Attempting to inject embedded credentials to test the underlying URL parser engine structure
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab7/bypassing1.png)
 
 3. Deploying double-encoded fragment syntax (`%2523`) to split the host rendering context
-![Responses](../images/Lab1/solved.png)
+![Responses](../images/Lab7/bypassed.png)
 
 4. Finalizing the internal command path string structure to wipe out Carlos from the admin profile logs
 ![Responses](../images/Lab1/solved.png)
