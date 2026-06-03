@@ -58,11 +58,11 @@ stockApi=http://192.168.0.23:8080/admin/delete?username=carlos
 
 ### Configuring Burp Intruder to Scan the Internal IP Range
 
-![Intruder Configuration](../images/Lab2/gettingReadyForAttack.png)
+![Intruder Configuration](../images/Lab2/gettingReadyForBruteForce.png)
 
 ### Identifying the Active Internal Host (`192.168.0.23`)
 
-![Internal Host Discovery](../images/Lab2/foundInternalPanel.png)
+![Internal Host Discovery](../images/Lab2/foundInternalIP.png)
 
 ### Sending the User Deletion Request Through Burp Repeater
 
